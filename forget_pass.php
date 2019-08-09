@@ -1,47 +1,76 @@
 <?php 
-	if(isset($_POST) & !empty($_POST)){
-	$username = mysqli_real_escape_string($conn, $_POST['username']);//this is username querry
-	$sql = "SELECT * FROM `users` WHERE name = '$username'";
-	$result = mysqli_query($conn, $sql);
-	$count = mysqli_num_rows($result);
-	if($count == 1){
-		echo "Send email to user with password";
-	}else{
-		echo "User name does not exist in database";
-	}
-}
+		include"db-conn.php"; 
+		if(isset($_POST['submit'])){
+		$email=$_POST['email'];
+		$sql="SELECT * FROM users where email='$email'";
+		$result=mysqli_query($conn,$sql);
+		$final=mysqli_fetch_assoc($result);
 
-	$r = mysqli_fetch_assoc($result);
-	$password = $r['password'];
-	$to = $r['email'];
-	$subject = "Your Recovered Password";
-	 
-	$message = "Please use this password to login " . $password;
-	$headers = "From : mbilalshafiq9@gmail.com";
-	if(mail($to, $subject, $message, $headers)){
-		echo "Your Password has been sent to your email id";
-	}else{
-		echo "Failed to Recover your password, try again";
-	}
+require 'PHPMailer-master/PHPMailerAutoload.php';
 
+$mail = new PHPMailer();
+  
+  //Enable SMTP debugging.
+  //Set PHPMailer to use SMTP.
+  $mail->isSMTP();
+  //Set SMTP host name
+  $mail->Host = "smtp.gmail.com";
+  $mail->SMTPOptions = array(
+                    'ssl' => array(
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true
+                    )
+                );
+  //Set this to true if SMTP host requires authentication to send email
+  $mail->SMTPAuth = TRUE;
+  //Provide username and password
+  $mail->Username = "mbilalshafiq9@gmail.com";
+  $mail->Password = "mianbilal";
+  //If SMTP requires TLS encryption then set it
+  $mail->SMTPSecure = "false";
+  $mail->Port = 587;
+  //Set TCP port to connect to
+  
+  $mail->From = "mbilalshafiq9@gmail.com";
+  $mail->FromName = "MyChat";
+  
+  $mail->addAddress($final["email"]);
+  
+  $mail->isHTML(true);
+ 
+  $mail->Subject = "Forgot Password";
+  $mail->Body = "<i>This is your password:</i>".$final["password"];
+  $mail->AltBody = "This is the plain text version of the email content";
+  if(!$mail->send())
+  {
+   echo "Mailer Error: " . $mail->ErrorInfo;
+  }
+  else
+  {
+   echo "Message has been sent successfully";
+  }
+		}
  ?>
+
+
 
  <!DOCTYPE html>
  <html>
  <head>
- 	<title>Forgot</title>
+ 	<title>MyChat</title>
+ 	<link rel="stylesheet" type="text/css" href="signin.css">
  </head>
  <body>
- 	<form class="form-signin" method="POST">
-        <h2 class="form-signin-heading">Forgot Password</h2>
-        <div class="input-group">
-	  <span class="input-group-addon" id="basic-addon1">@</span>
-	  <input type="text" name="username" class="form-control" placeholder="Username" required>
-	</div>
-	<br />
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Forgot Password</button>
-        <a class="btn btn-lg btn-primary btn-block" href="login.php">Login</a>
-      </form>
- 
+ 	<form method="POST" action="forget_pass.php">
+    <label for="mail"><b>Email</b></label>
+    <input type="text" placeholder="Enter Your Account Email" name="email" required>
+    <button type="submit" name="submit">Send</button>
+    
+  </form>
+
+
  </body>
  </html>
+
+
