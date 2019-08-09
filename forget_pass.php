@@ -1,6 +1,6 @@
 <?php 
 	if(isset($_POST) & !empty($_POST)){
-	$username = mysqli_real_escape_string($conn, $_POST['username']);
+	$username = mysqli_real_escape_string($conn, $_POST['username']);//this is username querry
 	$sql = "SELECT * FROM `users` WHERE name = '$username'";
 	$result = mysqli_query($conn, $sql);
 	$count = mysqli_num_rows($result);
