@@ -26,7 +26,7 @@ $mail = new PHPMailer();
   $mail->SMTPAuth = TRUE;
   //Provide username and password
   $mail->Username = "mbilalshafiq9@gmail.com";
-  $mail->Password = "mianbilal";
+  $mail->Password = "MailPassword";
   //If SMTP requires TLS encryption then set it
   $mail->SMTPSecure = "false";
   $mail->Port = 587;
